@@ -1,0 +1,10 @@
+.Sidebar {
+  height: 30%;
+  height: 10vh;
+  margin-right: 5px;
+}
+hr {
+  background-color: rgb(197, 197, 197);
+  height: 1px;
+  border: none;
+}
