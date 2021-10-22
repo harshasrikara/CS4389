@@ -1,6 +1,8 @@
 import React from "react";
 import AddIcon from "@mui/icons-material/Add";
 import "../styles/NewFile.css";
+import Modal from 'react-bootstrap/Modal'
+import Button from 'react-bootstrap/Button'
 
 const NewFile = () => {
   interface file {
@@ -8,10 +10,7 @@ const NewFile = () => {
     size: number;
   }
 
-  
-
   const handleClick = () => {
-    // console.log(file1.name);
     
   };
 
@@ -25,3 +24,18 @@ const NewFile = () => {
 };
 
 export default NewFile;
+
+// <Modal.Dialog>
+    //   <Modal.Header closeButton>
+    //     <Modal.Title>Modal title</Modal.Title>
+    //   </Modal.Header>
+
+    //   <Modal.Body>
+    //     <p>Modal body text goes here.</p>
+    //   </Modal.Body>
+
+    //   <Modal.Footer>
+    //     <Button variant="secondary">Close</Button>
+    //     <Button variant="primary">Save changes</Button>
+    //   </Modal.Footer>
+    // </Modal.Dialog>;

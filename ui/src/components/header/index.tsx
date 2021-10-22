@@ -5,6 +5,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import SettingsIcon from "@mui/icons-material/Settings";
 import CircleIcon from "@mui/icons-material/Circle";
+import Button from "react-bootstrap/Button";
 
 const NavBar = () => {
   return (
@@ -26,7 +27,11 @@ const NavBar = () => {
         </span>
         {/* <img src={} alt="User Photo" /> */}
         {/* add images of the user */}
-        <CircleIcon /> 
+        <span>
+          <CircleIcon />
+          <Button variant="outline-dark">Login</Button>
+          {""}
+        </span>
       </div>
     </div>
   );

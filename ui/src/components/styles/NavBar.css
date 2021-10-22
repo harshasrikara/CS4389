@@ -5,8 +5,8 @@
   width: 100vw;
 }
 
-.NavBar > div {
-  padding: 12px;
+.NavBar > div{
+  padding: 10px;
 }
 
 .NavBar_logo {
@@ -47,3 +47,4 @@
   border: none;
   margin-left: 10px;
 }
+
