@@ -9,7 +9,7 @@ const Footer = () => {
         <Card className="bg-light text-center text-lg-start">
           <Container className="Footer_container">
           </Container>
-          <div className="text-center p-3">© 2021 Copyright</div>
+          <div className="text-center p-3">© 2021 Copyright File Share</div>
         </Card>
     </div>
   );

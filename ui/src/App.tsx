@@ -2,7 +2,7 @@ import React from "react";
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import NavBar from "./components/header";
-import SideBar from "./components/sideBar";
+import SideBar from "./components/uploadSpace";
 import FileSpace from "./components/fileSpace"
 import Footer from "./components/footer"
 

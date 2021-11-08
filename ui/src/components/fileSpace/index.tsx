@@ -1,35 +1,44 @@
-import React, { Component } from "react";
-import Card from "react-bootstrap/Card";
+import React from "react";
 import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
+import FileCard from "./FileCard";
+import "../styles/FileSpace.css";
 
-interface Props {}
-interface State {}
+let dateTemp: Date = new Date();
 
-export default class index extends Component<Props, State> {
-  state = {};
+//sample file with info
+var files: File[] = [
+  { id: 0, fileName: "Available", date: dateTemp, size: 6 },
+  { id: 1, fileName: "Ready", date: dateTemp, size: 7 },
+  { id: 2, fileName: "Started", date: dateTemp, size: 8 },
+  { id: 3, fileName: "new", date: dateTemp, size: 8 },
+];
 
-  render() {
-    return (
-      <div>
-        <p>Logged in as: XXX</p>
-        <Row xs={1} md={3} className="g-2">
-          {Array.from({ length: 12 }).map((_, idx) => (
-            <Col>
-              <Card>
-                <Card.Body>
-                  <Card.Title>Files Name</Card.Title>
-                  <Card.Text>
-                    File Description: File Size, Date Added, etc
-                  </Card.Text>
-                </Card.Body>
-              </Card>
-            </Col>
-          ))}
-        </Row>
-      </div>
-    );
-  }
+export type File = {
+  id: number;
+  fileName: string;
+  date: Date;
+  size: number;
 }
+
+export interface Files {
+  File: File,
+}
+
+
+const FileSpace = () => {
+  return (
+    <div className="FileSpace">
+      <p>Logged in as: NAME</p>
+      <Row xs={1} md={4} className="g-2">
+        {files.map((file, idx) => (
+          <FileCard File={file}></FileCard>
+        ))}
+      </Row>
+    </div>
+  );
+};
+
+export default FileSpace;
+
 
 // tsrcc
