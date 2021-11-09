@@ -28,7 +28,7 @@ export interface Files {
 const FileSpace = () => {
   return (
     <div className="FileSpace">
-      <p>Logged in as: NAME</p>
+      <p>Signed in as: NAME</p>
       <Row xs={1} md={4} className="g-2">
         {files.map((file, idx) => (
           <FileCard File={file}></FileCard>

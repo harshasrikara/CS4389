@@ -7,17 +7,17 @@ import Modal from "react-bootstrap/Modal";
 
 const NewFile = () => {
   const [show, setShow] = useState(false);
-
+  const [fileName, setFileName] = useState("");
+  const [fileSize, setFileSize] = useState(0);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
-  const [chosenFile, setChosenFile] = useState(null);
-
-  let file_size;
-  let file_name;
-
-  // const [uploadFile, setUploadFile] = React.useState();
-  
+  // On file select (from the pop up)
+  const onFileChange = (event: any) => {
+    // Update the state
+    setFileName(event.target.files[0].name);
+    setFileSize(event.target.files[0].size);
+  };
 
   const submitForm = (event: any) => {
     event.preventDefault();
@@ -33,41 +33,46 @@ const NewFile = () => {
       .then((response) => {})
       .catch((error) => {});
   };
-  //storing file information before uploading to the server
-  const fileChangedHandler = (event: any) => {
+ 
 
-    setChosenFile(event.target.files[0]);
-    file_size = event.target.files[0].size;
-    //or if you like to have name and type
-    file_name = event.target.files[0].name;
-    //stores the file into the state
-    console.log(event.target.files[0]);
-    
-   //do whatever operation you want to do here
-};
+  const fileData = () => {
+    if (fileName != "") {
+      return (
+        <div>
+          <Modal.Body>
+            <p>Name: {fileName}</p>
+            <p>Size: {fileSize} bytes</p>
+          </Modal.Body>
+        </div>
+      );
+    } else {
+      return (
+        <div>
+          <br />
+          <Modal.Body>Choose before Pressing the Upload button</Modal.Body>
+        </div>
+      );
+    }
+  };
 
   const handleClick = () => {};
   return (
     <div className="NewFile_container">
-      {/* <AddIcon type="file" onChange={(e) => setUploadFile(e.target.files)} /> */}
       {/* accept=".pdf,.doc,.docx" */}
-      {/* <input type="file" /> */}
-      {/* submit button */}
       <div className="d-grid gap-2">
         <Button variant="outline-dark" size="lg" onClick={handleShow}>
           <AddIcon></AddIcon>
         </Button>
       </div>
-{/* modal for handling file uploading */}
+      {/* modal for handling file uploading */}
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>Upload</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <input type="file" onChange={fileChangedHandler} />
+          <input accept=".txt" type="file" onChange={onFileChange} />
         </Modal.Body>
-        {/* <Modal.Body>Name: {chosenFile.name}</Modal.Body> */}
-        {/* <Modal.Body>Size: {chosenFile.size}</Modal.Body> */}
+        {fileData()}
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
             Close

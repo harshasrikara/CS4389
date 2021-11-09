@@ -8,12 +8,14 @@ import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import InfoIcon from "@mui/icons-material/Info";
+import ContactMailIcon from "@mui/icons-material/ContactMail";
+import { GitHub } from "@mui/icons-material";
 
 const NavBar = () => {
   //handle login page useState
-  const [show, setShow] = useState(false);
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  // const [show, setShow] = useState(false);
+  // const handleClose = () => setShow(false);
+  // const handleShow = () => setShow(true);
 
   //handle help page
   const [showHelp, setShowHelp] = useState(false);
@@ -25,18 +27,23 @@ const NavBar = () => {
   const handleCloseAbout = () => setShowAbout(false);
   const handleShowAbout = () => setShowAbout(true);
 
+  //handle contact page
+  const [showContact, setShowContact] = useState(false);
+  const handleCloseContact = () => setShowContact(false);
+  const handleShowContact = () => setShowContact(true);
+
   return (
     <div className="NavBar">
       <div className="NavBar_logo">
         <LockIcon />
         <span>File Share</span>
       </div>
-      <div className="NavBar_searchContainer">
+      {/* <div className="NavBar_searchContainer">
         <div className="NavBar_searchBar">
           <SearchIcon />
           <input type="text" placeholder="Search" />
         </div>
-      </div>
+      </div> */}
       <div className="NavBar_icons">
         <span>
           <Button variant="clear" onClick={handleShowHelp}>
@@ -49,11 +56,15 @@ const NavBar = () => {
           <Button variant="clear" onClick={handleShowAbout}>
             <InfoIcon></InfoIcon>
           </Button>
+          <Button variant="clear" onClick={handleShowContact}>
+            <ContactMailIcon></ContactMailIcon>
+          </Button>
           <Button variant="clear">
             <PersonIcon />
           </Button>
-          <Button variant="secondary" onClick={handleShow}>
-            Login
+          <Button variant="secondary">
+            {/* Add link to github login page */}
+            <GitHub></GitHub> Sign-In
           </Button>
         </span>
       </div>
@@ -66,6 +77,19 @@ const NavBar = () => {
         <Modal.Body>INFORMATION ABOUT OUR APPLICATION</Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleCloseHelp}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      {/* modal for contact page */}
+      <Modal size="lg" show={showContact} onHide={handleCloseContact}>
+        <Modal.Header closeButton>
+          <Modal.Title>Contact Us</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>OUR CONTACT INFORMATION HERE</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseContact}>
             Close
           </Button>
         </Modal.Footer>
@@ -85,11 +109,16 @@ const NavBar = () => {
       </Modal>
 
       {/* modal for login page */}
-      <Modal show={show} onHide={handleClose} backdrop="static">
+      {/* <Modal size="sm" show={show} onHide={handleClose} backdrop="static">
         <Modal.Header closeButton>
-          <Modal.Title>Sign-In</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
+          <Modal.Title>
+            <GitHub></GitHub>
+            Sign-In
+          </Modal.Title>
+        </Modal.Header> */}
+
+        {/* <Modal.Body>
+          <Button size="lg">LINK TO GITHUB</Button>
           <Form>
             <Form.Group className="mb-3" controlId="formBasicEmail">
               <Form.Label>User Name</Form.Label>
@@ -110,7 +139,7 @@ const NavBar = () => {
             Close
           </Button>
         </Modal.Footer>
-      </Modal>
+      </Modal> */}
     </div>
   );
 };
