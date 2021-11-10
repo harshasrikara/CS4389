@@ -8,6 +8,7 @@ import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import InfoIcon from "@mui/icons-material/Info";
+import { getAuth, signInWithEmailAndPassword } from "../../firebase/config";
 
 const NavBar = () => {
   //handle login page useState
@@ -24,6 +25,39 @@ const NavBar = () => {
   const [showAbout, setShowAbout] = useState(false);
   const handleCloseAbout = () => setShowAbout(false);
   const handleShowAbout = () => setShowAbout(true);
+
+  // sign in state
+  const [attempt, setAttempt] = useState(false);
+  const [status, setStatus] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const auth = getAuth();
+
+  const handleSubmit = (event: any) => {
+    event.preventDefault();
+    setLoading(true);
+    signInWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      // Signed in 
+      const user = userCredential.user;
+      setStatus(true);
+      setLoading(false);
+
+      console.log(user);
+    })
+    .catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      setStatus(false);
+      setLoading(false);
+
+      console.log({ errorCode, errorMessage });
+    });
+    setAttempt(true);
+  }
 
   return (
     <div className="NavBar">
@@ -93,16 +127,17 @@ const NavBar = () => {
           <Form>
             <Form.Group className="mb-3" controlId="formBasicEmail">
               <Form.Label>User Name</Form.Label>
-              <Form.Control type="email" placeholder="Username" />
+              <Form.Control type="email" placeholder="Username" onChange={(event: any) => { setEmail(event.target.value)}}/>
             </Form.Group>
 
             <Form.Group className="mb-3" controlId="formBasicPassword">
               <Form.Label>Password</Form.Label>
-              <Form.Control type="password" placeholder="Password" />
+              <Form.Control type="password" placeholder="Password" onChange={(event: any) => { setPassword(event.target.value)}}/>
             </Form.Group>
-            <Button variant="primary" type="submit">
+            <Button variant="primary" type="submit" onClick={handleSubmit}>
               Sign-In
             </Button>
+            <div>{loading ? "loading" : attempt ? status ? "success" : "unauthorized" : ""}</div>
           </Form>
         </Modal.Body>
         <Modal.Footer>
