@@ -2,7 +2,7 @@ import React from "react";
 import Card from "react-bootstrap/Card";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
-import { Files } from "./index";
+import { Files } from "./FileSpace";
 import DownloadIcon from "@mui/icons-material/Download";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import "../styles/FileCard.css";
@@ -13,6 +13,7 @@ const FileCard: React.FC<Files> = (props): JSX.Element => {
       <Card>
         <Card.Body>
           <Card.Title>{props.File.fileName}</Card.Title>
+          <Card.Text>File key:{props.File.key}</Card.Text>
           <Card.Text>File Size:{props.File.size}</Card.Text>
           <Card.Text>Uploaded Date:{props.File.date.toString()}</Card.Text>
           <div className="FileCardButton">

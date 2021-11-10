@@ -16,12 +16,19 @@
 }
 
 .NavBar_logo>span{
-    font-size: 20px;
-    font-weight: 500;
+    font-size: 16px;
+    font-weight: 650;
     margin-left: 20px;
 }
 
-.NavBar_searchContainer {
+.NavBar_icons{
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+
+/* .NavBar_searchContainer {
   flex: 1;
   display: flex;
   align-items: center;
@@ -46,5 +53,5 @@
   background: none;
   border: none;
   margin-left: 10px;
-}
+} */
 
