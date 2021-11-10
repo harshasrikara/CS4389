@@ -1,22 +1,17 @@
-import React, { useState } from "react";
+import React, {useState} from "react";
 import "../styles/NavBar.css";
+import { GitHubProvider } from "../../config/authMethods";
 import LockIcon from "@mui/icons-material/Lock";
-import SearchIcon from "@mui/icons-material/Search";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import PersonIcon from "@mui/icons-material/Person";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
-import Form from "react-bootstrap/Form";
 import InfoIcon from "@mui/icons-material/Info";
 import ContactMailIcon from "@mui/icons-material/ContactMail";
 import { GitHub } from "@mui/icons-material";
+import socialMediaAuth from "../../auth/auth";
 
-const NavBar = () => {
-  //handle login page useState
-  // const [show, setShow] = useState(false);
-  // const handleClose = () => setShow(false);
-  // const handleShow = () => setShow(true);
-
+const Header = () => {
   //handle help page
   const [showHelp, setShowHelp] = useState(false);
   const handleCloseHelp = () => setShowHelp(false);
@@ -32,18 +27,25 @@ const NavBar = () => {
   const handleCloseContact = () => setShowContact(false);
   const handleShowContact = () => setShowContact(true);
 
+
+
+  //handle login button pressed
+  const [loggedIn, setLoggedIn] = useState(false);
+  const handleLoggedIn = () => setLoggedIn(true);
+  const handleLoggedOut = () => setLoggedIn(false);
+
+  const handleLoginOnClick = async (provider: any) => {
+    const res = await socialMediaAuth(provider);
+    console.log(res);
+  };
+
   return (
     <div className="NavBar">
       <div className="NavBar_logo">
         <LockIcon />
         <span>File Share</span>
       </div>
-      {/* <div className="NavBar_searchContainer">
-        <div className="NavBar_searchBar">
-          <SearchIcon />
-          <input type="text" placeholder="Search" />
-        </div>
-      </div> */}
+
       <div className="NavBar_icons">
         <span>
           <Button variant="clear" onClick={handleShowHelp}>
@@ -62,7 +64,10 @@ const NavBar = () => {
           <Button variant="clear">
             <PersonIcon />
           </Button>
-          <Button variant="secondary">
+          <Button
+            variant="secondary"
+            onClick={() => handleLoginOnClick(GitHubProvider)}
+          >
             {/* Add link to github login page */}
             <GitHub></GitHub> Sign-In
           </Button>
@@ -107,41 +112,8 @@ const NavBar = () => {
           </Button>
         </Modal.Footer>
       </Modal>
-
-      {/* modal for login page */}
-      {/* <Modal size="sm" show={show} onHide={handleClose} backdrop="static">
-        <Modal.Header closeButton>
-          <Modal.Title>
-            <GitHub></GitHub>
-            Sign-In
-          </Modal.Title>
-        </Modal.Header> */}
-
-        {/* <Modal.Body>
-          <Button size="lg">LINK TO GITHUB</Button>
-          <Form>
-            <Form.Group className="mb-3" controlId="formBasicEmail">
-              <Form.Label>User Name</Form.Label>
-              <Form.Control type="email" placeholder="Username" />
-            </Form.Group>
-
-            <Form.Group className="mb-3" controlId="formBasicPassword">
-              <Form.Label>Password</Form.Label>
-              <Form.Control type="password" placeholder="Password" />
-            </Form.Group>
-            <Button variant="primary" type="submit">
-              Sign-In
-            </Button>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Close
-          </Button>
-        </Modal.Footer>
-      </Modal> */}
     </div>
   );
 };
 
-export default NavBar;
+export default Header;

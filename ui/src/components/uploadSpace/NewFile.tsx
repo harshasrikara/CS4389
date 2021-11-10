@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+// import axios from "axios";
 import AddIcon from "@mui/icons-material/Add";
 import "../styles/NewFile.css";
 import Button from "react-bootstrap/Button";
@@ -19,24 +19,24 @@ const NewFile = () => {
     setFileSize(event.target.files[0].size);
   };
 
-  const submitForm = (event: any) => {
-    event.preventDefault();
+  // const submitForm = (event: any) => {
+  //   event.preventDefault();
 
-    const dataArray = new FormData();
+  //   const dataArray = new FormData();
 
-    axios
-      .post("/", dataArray, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      })
-      .then((response) => {})
-      .catch((error) => {});
-  };
+  //   axios
+  //     .post("/", dataArray, {
+  //       headers: {
+  //         "Content-Type": "multipart/form-data",
+  //       },
+  //     })
+  //     .then((response) => {})
+  //     .catch((error) => {});
+  // };
  
 
   const fileData = () => {
-    if (fileName != "") {
+    if (fileName !== "") {
       return (
         <div>
           <Modal.Body>
@@ -55,7 +55,6 @@ const NewFile = () => {
     }
   };
 
-  const handleClick = () => {};
   return (
     <div className="NewFile_container">
       {/* accept=".pdf,.doc,.docx" */}
