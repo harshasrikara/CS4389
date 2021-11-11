@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import "../styles/NavBar.css";
+import "../styles/Header.css";
 import { GitHubProvider } from "../../config/authMethods";
-import { Button, Modal } from "react-bootstrap";
+import { Button, Modal, Form } from "react-bootstrap";
 import socialMediaAuth from "../../auth/auth";
 
 import firebase from "../../config/firebase-config";
@@ -10,9 +10,15 @@ import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import PersonIcon from "@mui/icons-material/Person";
 import InfoIcon from "@mui/icons-material/Info";
 import ContactMailIcon from "@mui/icons-material/ContactMail";
+import AlternateEmailIcon from "@mui/icons-material/AlternateEmail";
 import { GitHub } from "@mui/icons-material";
 
 const Header = () => {
+  //handle login page useState
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
   //handle help page
   const [showHelp, setShowHelp] = useState(false);
   const handleCloseHelp = () => setShowHelp(false);
@@ -39,18 +45,18 @@ const Header = () => {
   const handleStatusLoggedOut = () => setStatusLoggedIn(false);
 
   //handle email address of user
-  const [userInfo, setUserInfo] = useState<{
-    email: null | string;
-    UID: null | number;
-  }>({ email: null, UID: null });
+  // const [userInfo, setUserInfo] = useState<{
+  //   email: null | string;
+  //   UID: null | number;
+  // }>({ email: null, UID: null });
 
   //sign in the user
   const handleLoginOnClick = async (provider: any) => {
     const res = await socialMediaAuth(provider);
-
   };
 
   //handle logout
+  // will need to error check if signout fails
   function handleLogout() {
     firebase.auth().signOut();
   }
@@ -71,6 +77,7 @@ const Header = () => {
     if (statusLoggedIn === false) {
       return (
         <Button
+          className="NavBar_button"
           variant="secondary"
           onClick={() => handleLoginOnClick(GitHubProvider)}
         >
@@ -80,14 +87,46 @@ const Header = () => {
       );
     } else {
       return (
-        <Button variant="secondary" onClick={handleLogout}>
+        <Button
+          className="NavBar_button"
+          variant="secondary"
+          onClick={handleLogout}
+        >
           {/* Add link to github login page */}
-          <GitHub></GitHub> Sign Out
+          <>Sign Out</>
         </Button>
       );
     }
   };
-  
+
+  // sign in state
+  const [attempt, setAttempt] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleSubmit = (event: any) => {
+    firebase
+      .auth()
+      .signInWithEmailAndPassword(email, password)
+      .then((userCredential) => {
+        const user = userCredential.user;
+        handleStatusLoggedIn();
+        setLoading(false);
+        console.log(user);
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        handleStatusLoggedOut();
+        setLoading(false);
+
+        console.log({ errorCode, errorMessage });
+      });
+    setAttempt(true);
+  };
+
   //whether to show user info or default user info
   const userInfoShow = () => {
     if (statusLoggedIn === false) {
@@ -102,16 +141,18 @@ const Header = () => {
         email: email,
         UID: UID,
       };
-      console.log(tempUserInfo);
-      return ( 
+
+      return (
         <>
-        <p>Email Address: {tempUserInfo.email}</p>
-        <p>User UID: {tempUserInfo.UID} ** WILL BE REMOVED: JUST FOR TESTING **</p>
+          <p>Email Address: {tempUserInfo.email}</p>
+          <p>
+            User UID: {tempUserInfo.UID} ** WILL BE REMOVED: JUST FOR TESTING **
+          </p>
         </>
       );
     }
   };
- 
+
   return (
     <div className="NavBar">
       <div className="NavBar_logo">
@@ -121,19 +162,40 @@ const Header = () => {
 
       <div className="NavBar_icons">
         <span>
-          <Button variant="clear" onClick={handleShowHelp}>
+          <Button
+            className="NavBar_button"
+            variant="clear"
+            onClick={handleShowHelp}
+          >
             <HelpOutlineIcon />
           </Button>
-        </span>
-        <span>
-          <Button variant="clear" onClick={handleShowAbout}>
+          <Button
+            className="NavBar_button"
+            variant="clear"
+            onClick={handleShowAbout}
+          >
             <InfoIcon></InfoIcon>
           </Button>
-          <Button variant="clear" onClick={handleShowContact}>
+          <Button
+            className="NavBar_button"
+            variant="clear"
+            onClick={handleShowContact}
+          >
             <ContactMailIcon></ContactMailIcon>
           </Button>
-          <Button variant="clear" onClick={handleShowUserInfo}>
+          <Button
+            className="NavBar_button"
+            variant="clear"
+            onClick={handleShowUserInfo}
+          >
             <PersonIcon />
+          </Button>
+          <Button
+            className="NavBar_button"
+            variant="secondary"
+            onClick={handleShow}
+          >
+            <AlternateEmailIcon></AlternateEmailIcon> Email Sign In
           </Button>
           {signInOut()}
         </span>
@@ -186,6 +248,55 @@ const Header = () => {
         <Modal.Body>{userInfoShow()}</Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleCloseUserInfo}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      {/* modal for login page */}
+      <Modal show={show} onHide={handleClose} backdrop="static">
+        <Modal.Header closeButton>
+          <Modal.Title>Sign-In</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group className="mb-3" controlId="formBasicEmail">
+              <Form.Label>User Name</Form.Label>
+              <Form.Control
+                type="email"
+                placeholder="Username"
+                onChange={(event: any) => {
+                  setEmail(event.target.value);
+                }}
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-3" controlId="formBasicPassword">
+              <Form.Label>Password</Form.Label>
+              <Form.Control
+                type="password"
+                placeholder="Password"
+                onChange={(event: any) => {
+                  setPassword(event.target.value);
+                }}
+              />
+            </Form.Group>
+            <Button variant="primary" type="button" onClick={handleSubmit}>
+              Sign In
+            </Button>
+            <div>
+              {loading
+                ? "loading"
+                : attempt
+                ? statusLoggedIn
+                  ? "Success"
+                  : "Unauthorized"
+                : ""}
+            </div>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
         </Modal.Footer>
