@@ -4,11 +4,15 @@ import AddIcon from "@mui/icons-material/Add";
 import "../styles/NewFile.css";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
+import axios from "axios";
 
 const NewFile = () => {
   const [show, setShow] = useState(false);
   const [fileName, setFileName] = useState("");
   const [fileSize, setFileSize] = useState(0);
+  const [selectedFile, setSelectedFile] = useState("");
+  const [key, setKey] = useState("");
+
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
@@ -17,6 +21,7 @@ const NewFile = () => {
     // Update the state
     setFileName(event.target.files[0].name);
     setFileSize(event.target.files[0].size);
+    setSelectedFile(event.target.files[0]);
   };
 
   // const submitForm = (event: any) => {
@@ -33,7 +38,30 @@ const NewFile = () => {
   //     .then((response) => {})
   //     .catch((error) => {});
   // };
+
+  const fileUpload = (event: any) => {
+    event.preventDefault();
+    console.log("uploading file");
+
+    const formData = new FormData();
+    formData.append("toBeEncryptedFile", selectedFile, fileName);
+    formData.append("key", key)
+    console.log(selectedFile);
+    console.log(key);
+
+    axios.post("/uploadFile", formData, {
+      headers: {
+        "Access-Control-Allow-Origin": '*'
+      }
+    }).then((response) => {
+      console.log(response);
+      handleClose();
+    });
+  }
  
+  const handleKey = (event: any) => {
+    setKey(event.target.value); 
+  }
 
   const fileData = () => {
     if (fileName !== "") {
@@ -42,6 +70,9 @@ const NewFile = () => {
           <Modal.Body>
             <p>Name: {fileName}</p>
             <p>Size: {fileSize} bytes</p>
+
+            <input type="text" placeholder="Encrypt with key" onChange={handleKey}/>
+            <p><em>If none provided, a default key will be used</em></p>
           </Modal.Body>
         </div>
       );
@@ -70,13 +101,14 @@ const NewFile = () => {
         </Modal.Header>
         <Modal.Body>
           <input accept=".txt" type="file" onChange={onFileChange} />
+          
         </Modal.Body>
         {fileData()}
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
-          <Button variant="primary" onClick={handleClose}>
+          <Button variant="primary" onClick={fileUpload}>
             Upload
           </Button>
         </Modal.Footer>
