@@ -27,6 +27,10 @@
   top: 0;
 }
 
+.NavBar_icons> span > .NavBar_button{
+  margin-left: 5px;
+}
+
 
 /* .NavBar_searchContainer {
   flex: 1;
