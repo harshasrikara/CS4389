@@ -1,12 +1,13 @@
 import { Request, Response } from 'express';
 import multer from 'multer';
+import fs from 'fs';
 import { encryptFile } from './aes';
 
 import * as admin from 'firebase-admin';
 import * as serviceAccount from './key_id.json';
 
 const firebaseAdmin = admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount as admin.ServiceAccount)
+    credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
 });
 const storageRef = firebaseAdmin.storage().bucket(`gs://cs4389-security.appspot.com`);
 
@@ -35,11 +36,24 @@ export async function uploadFile(req: Request, res: Response) {
                 return;
             }
 
+            if (!req.body.userId) {
+                console.log('No user id was provided');
+                res.status(500).send('No user id was provided');
+                return;
+            }
+            
+
             if (encryptFile(req.file.path, req.body.key) === true) {
-                // TODO: Remove line below and uncomment firebase code when setup
-                res.status(200).send('File encrypted successfully');
-                if (await uploadToFirebase(req.file.path) === true) {
+                if (await uploadToFirebase(req.file.path, req.body.userId) === true) {
                     console.log('Successfully uploaded to Firebase');
+                    res.status(200).send('File encrypted and uploaded successfully');
+
+                    // remove file from uploads folder
+                    fs.unlink(req.file.path, (err) => {
+                        if (err) {
+                            console.log(err);
+                        }
+                    })
                     return;
                 }
                 else {
@@ -58,14 +72,16 @@ export async function uploadFile(req: Request, res: Response) {
 }
 
 // Return true or false if the file was uploaded successfully
-async function uploadToFirebase(filePath: string) {
+async function uploadToFirebase(filePath: string, userId: string) {
     // Upload the File
-    var uploaded;
+    let uploaded;
+    const path = `${userId}/${filePath.replace(/uploads[\/\\]/i, "")}`;
     const storage = await storageRef.upload(filePath, {
         public: true,
         metadata: {
             contentType: 'application/octet-stream'
-        }
+        },
+        destination: path
     }).then((result) => {
         uploaded = true;
     })

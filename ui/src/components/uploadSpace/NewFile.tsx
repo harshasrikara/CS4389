@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-// import axios from "axios";
 import AddIcon from "@mui/icons-material/Add";
 import "../styles/NewFile.css";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import axios from "axios";
+import firebase from "../../config/firebase-config";
 
 const NewFile = () => {
   const [show, setShow] = useState(false);
@@ -41,13 +41,19 @@ const NewFile = () => {
 
   const fileUpload = (event: any) => {
     event.preventDefault();
-    console.log("uploading file");
 
+    const currentUser = firebase.auth().currentUser;
+    const userId = currentUser ? currentUser.uid : "";
+
+    console.log("uploading file");
     const formData = new FormData();
     formData.append("toBeEncryptedFile", selectedFile, fileName);
     formData.append("key", key)
+    formData.append("userId", userId)
+
     console.log(selectedFile);
     console.log(key);
+    console.log(userId);
 
     axios.post("/uploadFile", formData, {
       headers: {
