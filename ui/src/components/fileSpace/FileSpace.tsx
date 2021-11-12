@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Row from "react-bootstrap/Row";
 import FileCard from "./FileCard";
 import "../styles/FileSpace.css";
@@ -6,74 +6,62 @@ import firebase from "../../config/firebase-config";
 import { Filter2Sharp } from "@mui/icons-material";
 import { isTemplateSpan } from "typescript";
 
-let dateTemp: Date = new Date();
-
-const user = firebase.auth().currentUser;
-const currentUID: any = "4eBy3u7ViwPl0tn5W01NvH1j77H3";
-var storage = firebase.storage();
-var storageRef = storage.ref();
-var pathReference = storage.ref(currentUID + "/Untitled.txt");
-
-// to fetch download link
-// pathReference.getDownloadURL().then(function (url) {
-
-//   console.log(url);
-
-// })
-
-var listRef = storageRef.child("4eBy3u7ViwPl0tn5W01NvH1j77H3");
-// console.log(pathReference);
-// Find all the prefixes and items.
-// Create a reference under which you want to list
-var listRef = storageRef.child("files/uid");
-
-// Find all the prefixes and items.
-listRef
-  .listAll()
-  .then((res) => {
-    console.log("LOL");
-    
-    res.items.forEach(async (itemRef) => {
-      var tempURL = itemRef.getDownloadURL();
-
-      var tempName = itemRef.name;
-      var tempFile: File = {
-        fileName: tempName,
-        // link: tempLink
-      };
-      files.push(tempFile);
-      console.log(tempName);
-    });
-  })
-  .catch((error) => {
-    // Uh-oh, an error occurred!
-  });
-
-//sample file with info
-var files: File[] = [];
-
-// Promise.all(resList.items.forEach(itemRef => {
-//   return
-// }))
+export interface gcpFile {
+  name: string;
+  link: string;
+}
 
 export type File = {
   fileName: string;
-  // link: string;
-};
-// date: Date;
-// size: number;
+}
 
 export interface Files {
-  File: File;
+  File: Files;
 }
 
 const FileSpace = () => {
+  const [uid, setUID] = useState("Not Signed In");
+  const [files, setFiles] = useState<gcpFile[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  const storage = firebase.storage();
+  const storageRef = storage.ref(); 
+
+  const checkFiles = async () => {
+    setLoading(true);
+    const ref = storageRef.child(uid);
+    console.log(ref);
+    ref.listAll().then((res) => {
+      const newArr: gcpFile[] = [];
+      res.items.forEach(async (itemRef) => {
+        newArr.push({name: itemRef.name, link: await itemRef.getDownloadURL()});
+      });
+      return newArr;
+    }).then((res) => {
+      setFiles(res);
+      setLoading(false);
+      console.log(files);
+    });
+  }
+
+  firebase.auth().onAuthStateChanged((user) => {
+    if (user) {
+      var uid = user.uid;
+      setUID(uid);
+    } else {
+      // User is signed out
+      setUID("Not Signed In");
+    }
+  });
+
   return (
     <div className="FileSpace">
-      <p>Signed in as: NAME</p>
+      <button onClick={async () => { await checkFiles() }}>Refresh</button>
+      <p>Signed in as: {uid}</p>
+      <p>{loading ? "loading" : ""}</p>
       <Row xs={1} md={4} className="g-2">
         {files.map((file) => (
-          <FileCard File={file}></FileCard>
+          <FileCard name={file.name} link={file.link}/>
         ))}
       </Row>
     </div>
