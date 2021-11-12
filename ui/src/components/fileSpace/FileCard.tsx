@@ -7,15 +7,17 @@ import DownloadIcon from "@mui/icons-material/Download";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import "../styles/FileCard.css";
 
+
 const FileCard: React.FC<Files> = (props): JSX.Element => {
+  console.log(props.File);
+  
   return (
     <Col>
       <Card>
         <Card.Body>
           <Card.Title>{props.File.fileName}</Card.Title>
-          <Card.Text>File key:{props.File.key}</Card.Text>
-          <Card.Text>File Size:{props.File.size}</Card.Text>
-          <Card.Text>Uploaded Date:{props.File.date.toString()}</Card.Text>
+          {/* <Card.Text>File Size:{props.File.size}</Card.Text>
+          <Card.Text>Uploaded Date:{props.File.date.toString()}</Card.Text> */}
           <div className="FileCardButton">
             <Button size="sm" variant="outline-dark">
               <DownloadIcon></DownloadIcon>
