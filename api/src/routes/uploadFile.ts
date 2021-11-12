@@ -1,6 +1,14 @@
 import { Request, Response } from 'express';
 import multer from 'multer';
-import {encryptFile} from './aes';
+import { encryptFile } from './aes';
+
+import * as admin from 'firebase-admin';
+import * as serviceAccount from './key_id.json';
+
+const firebaseAdmin = admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount as admin.ServiceAccount)
+});
+const storageRef = firebaseAdmin.storage().bucket(`gs://cs4389-security.appspot.com`);
 
 export async function uploadFile(req: Request, res: Response) {
     const storage = multer.diskStorage({
@@ -21,25 +29,24 @@ export async function uploadFile(req: Request, res: Response) {
             return;
         } else {
             // File is saved in uploads folder
-            if(!req.file?.path) {
+            if (!req.file?.path) {
                 console.log('No file was uploaded');
                 res.status(500).send('No file was uploaded');
                 return;
             }
 
-            if(encryptFile(req.file.path, req.body.key) === true) {
+            if (encryptFile(req.file.path, req.body.key) === true) {
                 // TODO: Remove line below and uncomment firebase code when setup
                 res.status(200).send('File encrypted successfully');
-                // if(uploadToFirebase(req.file.path) === true) {
-                //     console.log('Successfully uploaded to Firebase');
-                //     res.status(200).send("Successfully Encrypted and Uploaded!");
-                //     return;
-                // }
-                // else {
-                //     console.log('Failed to upload to Firebase');
-                //     res.status(500).send("Error uploading to Firebase");
-                //     return;
-                // }
+                if (await uploadToFirebase(req.file.path) === true) {
+                    console.log('Successfully uploaded to Firebase');
+                    return;
+                }
+                else {
+                    console.log('Failed to upload to Firebase');
+                    res.status(500).send("Error uploading to Firebase");
+                    return;
+                }
             }
             else {
                 console.log('Failed to encrypt file');
@@ -51,24 +58,21 @@ export async function uploadFile(req: Request, res: Response) {
 }
 
 // Return true or false if the file was uploaded successfully
-function uploadToFirebase(filePath: string) {
-    return false;
-    // const bucket = admin.storage().bucket();
-    // const file = bucket.file(filePath);
+async function uploadToFirebase(filePath: string) {
+    // Upload the File
+    var uploaded;
+    const storage = await storageRef.upload(filePath, {
+        public: true,
+        metadata: {
+            contentType: 'application/octet-stream'
+        }
+    }).then((result) => {
+        uploaded = true;
+    })
+        .catch((err) => {
+            console.log(err)
+            uploaded = false;
+        });
 
-    // const stream = file.createWriteStream({
-    //     metadata: {
-    //         contentType: 'application/octet-stream'
-    //     }
-    // });
-
-    // stream.on('error', (err) => {
-    //     console.log(err);
-    // });
-
-    // stream.on('finish', () => {
-    //     console.log('Successfully uploaded to Firebase');
-    // });
-
-    // stream.end();
+    return uploaded;
 }
