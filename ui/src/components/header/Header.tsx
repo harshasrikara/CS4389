@@ -76,6 +76,14 @@ const Header = () => {
   const signInOut = () => {
     if (statusLoggedIn === false) {
       return (
+        <>
+        <Button
+        className="NavBar_button"
+        variant="secondary"
+        onClick={handleShow}
+      >
+        <AlternateEmailIcon></AlternateEmailIcon> Email Sign In
+      </Button>
         <Button
           className="NavBar_button"
           variant="secondary"
@@ -84,6 +92,7 @@ const Header = () => {
           {/* Add link to github login page */}
           <GitHub></GitHub> Sign In
         </Button>
+        </>
       );
     } else {
       return (
@@ -189,13 +198,6 @@ const Header = () => {
             onClick={handleShowUserInfo}
           >
             <PersonIcon />
-          </Button>
-          <Button
-            className="NavBar_button"
-            variant="secondary"
-            onClick={handleShow}
-          >
-            <AlternateEmailIcon></AlternateEmailIcon> Email Sign In
           </Button>
           {signInOut()}
         </span>
