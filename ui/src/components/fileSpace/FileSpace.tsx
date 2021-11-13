@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Row from "react-bootstrap/Row";
 import Button from "react-bootstrap/Button";
 import FileCard from "./FileCard";
@@ -26,13 +26,46 @@ const FileSpace = () => {
   const [files, setFiles] = useState<gcpFile[]>([]);
   const [loading, setLoading] = useState(false);
 
+  const [statusLoggedIn, setStatusLoggedIn] = useState(false);
+  const handleStatusLoggedIn = () => setStatusLoggedIn(true);
+  const handleStatusLoggedOut = () => setStatusLoggedIn(false);
+
+  const signInOut = () => {
+    if (statusLoggedIn === false) {
+      return (<></>);
+    } else {
+      return (
+        <>
+          <Row xs={1} md={4} className="g-2">
+            {files.map((file) => (
+              <FileCard name={file.name} link={file.link} />
+            ))}
+          </Row>
+        </>
+      );
+    }
+  };
+
+  firebase.auth().onAuthStateChanged((user) => {
+    if (user) {
+      var uid = user.uid;
+      setUID(uid);
+      handleStatusLoggedIn();
+
+    } else {
+      // User is signed out
+      setUID("Not Signed In");
+      handleStatusLoggedOut();
+    }
+  });
+
   const storage = firebase.storage();
   const storageRef = storage.ref();
 
   const checkFiles = async () => {
     setLoading(true);
     const ref = storageRef.child(uid);
-    console.log(ref);
+    // console.log(ref);
     ref
       .listAll()
       .then((res) => {
@@ -45,26 +78,16 @@ const FileSpace = () => {
         });
         return newArr;
       })
-      .then((res) => {
+      .then(async (res) => {
+        await new Promise((resolve) => setTimeout(resolve, 2000));
         setFiles(res);
-        setLoading(false);
         console.log(files);
+        setLoading(false);
       });
   };
 
-  firebase.auth().onAuthStateChanged((user) => {
-    if (user) {
-      var uid = user.uid;
-      setUID(uid);
-    } else {
-      // User is signed out
-      setUID("Not Signed In");
-    }
-  });
-
   return (
     <div className="FileSpace">
-      {" "}
       <Button
         onClick={async () => {
           await checkFiles();
@@ -74,13 +97,7 @@ const FileSpace = () => {
       </Button>
       <p>Signed in as: {uid}</p>
       <p>{loading ? "loading" : ""}</p>
-      <Row xs={1} md={4} className="g-2">
-        {files.map((file) => (
-          <FileCard name={file.name} link={file.link} />
-        ))}
-      <div></div>
-      </Row>
-      
+      {signInOut()}
     </div>
   );
 };
