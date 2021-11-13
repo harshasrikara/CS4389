@@ -1,44 +1,90 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Row from "react-bootstrap/Row";
+import Button from "react-bootstrap/Button";
 import FileCard from "./FileCard";
 import "../styles/FileSpace.css";
+import firebase from "../../config/firebase-config";
+import { Filter2Sharp, RefreshRounded } from "@mui/icons-material";
+import { isTemplateSpan } from "typescript";
+import RefreshIcon from "@mui/icons-material/Refresh";
 
-let dateTemp: Date = new Date();
-
-//sample file with info
-var files: File[] = [
-  { key: 1, fileName: "Available", date: dateTemp, size: 6 },
-  { key: 2, fileName: "Ready", date: dateTemp, size: 7 },
-  { key: 3, fileName: "Started", date: dateTemp, size: 8 },
-  { key: 4, fileName: "new", date: dateTemp, size: 8 },
-];
+export interface gcpFile {
+  name: string;
+  link: string;
+}
 
 export type File = {
-  key: number;
   fileName: string;
-  date: Date;
-  size: number;
-}
+};
 
 export interface Files {
-  File: File,
+  File: Files;
 }
 
-
 const FileSpace = () => {
+  const [uid, setUID] = useState("Not Signed In");
+  const [files, setFiles] = useState<gcpFile[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  const storage = firebase.storage();
+  const storageRef = storage.ref();
+
+  const checkFiles = async () => {
+    setLoading(true);
+    const ref = storageRef.child(uid);
+    console.log(ref);
+    ref
+      .listAll()
+      .then((res) => {
+        const newArr: gcpFile[] = [];
+        res.items.forEach(async (itemRef) => {
+          newArr.push({
+            name: itemRef.name,
+            link: await itemRef.getDownloadURL(),
+          });
+        });
+        return newArr;
+      })
+      .then((res) => {
+        setFiles(res);
+        setLoading(false);
+        console.log(files);
+      });
+  };
+
+  firebase.auth().onAuthStateChanged((user) => {
+    if (user) {
+      var uid = user.uid;
+      setUID(uid);
+    } else {
+      // User is signed out
+      setUID("Not Signed In");
+    }
+  });
+
   return (
     <div className="FileSpace">
-      <p>Signed in as: NAME</p>
+      {" "}
+      <Button
+        onClick={async () => {
+          await checkFiles();
+        }}
+      >
+        <RefreshRounded></RefreshRounded>Refresh
+      </Button>
+      <p>Signed in as: {uid}</p>
+      <p>{loading ? "loading" : ""}</p>
       <Row xs={1} md={4} className="g-2">
-        {files.map((file, idx) => (
-          <FileCard key={file.key} File={file}></FileCard>
+        {files.map((file) => (
+          <FileCard name={file.name} link={file.link} />
         ))}
+      <div></div>
       </Row>
+      
     </div>
   );
 };
 
 export default FileSpace;
-
 
 // tsrcc
