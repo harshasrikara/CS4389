@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import Row from "react-bootstrap/Row";
+import Button from "react-bootstrap/Button";
 import FileCard from "./FileCard";
 import "../styles/FileSpace.css";
 import firebase from "../../config/firebase-config";
-import { Filter2Sharp } from "@mui/icons-material";
+import { Filter2Sharp, RefreshRounded } from "@mui/icons-material";
 import { isTemplateSpan } from "typescript";
+import RefreshIcon from "@mui/icons-material/Refresh";
 
 export interface gcpFile {
   name: string;
@@ -13,7 +15,7 @@ export interface gcpFile {
 
 export type File = {
   fileName: string;
-}
+};
 
 export interface Files {
   File: Files;
@@ -25,24 +27,30 @@ const FileSpace = () => {
   const [loading, setLoading] = useState(false);
 
   const storage = firebase.storage();
-  const storageRef = storage.ref(); 
+  const storageRef = storage.ref();
 
   const checkFiles = async () => {
     setLoading(true);
     const ref = storageRef.child(uid);
     console.log(ref);
-    ref.listAll().then((res) => {
-      const newArr: gcpFile[] = [];
-      res.items.forEach(async (itemRef) => {
-        newArr.push({name: itemRef.name, link: await itemRef.getDownloadURL()});
+    ref
+      .listAll()
+      .then((res) => {
+        const newArr: gcpFile[] = [];
+        res.items.forEach(async (itemRef) => {
+          newArr.push({
+            name: itemRef.name,
+            link: await itemRef.getDownloadURL(),
+          });
+        });
+        return newArr;
+      })
+      .then((res) => {
+        setFiles(res);
+        setLoading(false);
+        console.log(files);
       });
-      return newArr;
-    }).then((res) => {
-      setFiles(res);
-      setLoading(false);
-      console.log(files);
-    });
-  }
+  };
 
   firebase.auth().onAuthStateChanged((user) => {
     if (user) {
@@ -56,14 +64,23 @@ const FileSpace = () => {
 
   return (
     <div className="FileSpace">
-      <button onClick={async () => { await checkFiles() }}>Refresh</button>
+      {" "}
+      <Button
+        onClick={async () => {
+          await checkFiles();
+        }}
+      >
+        <RefreshRounded></RefreshRounded>Refresh
+      </Button>
       <p>Signed in as: {uid}</p>
       <p>{loading ? "loading" : ""}</p>
       <Row xs={1} md={4} className="g-2">
         {files.map((file) => (
-          <FileCard name={file.name} link={file.link}/>
+          <FileCard name={file.name} link={file.link} />
         ))}
+      <div></div>
       </Row>
+      
     </div>
   );
 };

@@ -208,7 +208,7 @@ const Header = () => {
         <Modal.Header closeButton>
           <Modal.Title>Help</Modal.Title>
         </Modal.Header>
-        <Modal.Body>INFORMATION ABOUT OUR APPLICATION</Modal.Body>
+        <Modal.Body>File Share is a webiste where you can upload text file and download encrpyted version of the file. Later, you can decrpyted your file using the key used to encrypt the file, and original text will be saved</Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleCloseHelp}>
             Close
@@ -221,7 +221,13 @@ const Header = () => {
         <Modal.Header closeButton>
           <Modal.Title>Contact Us</Modal.Title>
         </Modal.Header>
-        <Modal.Body>OUR CONTACT INFORMATION HERE</Modal.Body>
+        <Modal.Body>UTD CS4389</Modal.Body>
+        <Modal.Body>Nicholas Vitale: nfv180000@utdallas.edu</Modal.Body>
+        <Modal.Body>Bisma Ahmed: bismakhan5214@gmail.com</Modal.Body>
+        <Modal.Body>Abdullah Akbar: abdullahakbar@outlook.com</Modal.Body>
+        <Modal.Body>Harsha Chamrajnagar Srikara: harshasrikara@gmail.com</Modal.Body>
+        <Modal.Body>Anirudh Emmadi: kanna6501@gmail.com</Modal.Body>
+        <Modal.Body>Eojin Kim: eooojean@gmail.com</Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleCloseContact}>
             Close
@@ -234,7 +240,14 @@ const Header = () => {
         <Modal.Header closeButton>
           <Modal.Title>About Us</Modal.Title>
         </Modal.Header>
-        <Modal.Body>ABOUT US PAGE CONTNET</Modal.Body>
+        <Modal.Body>CS 4389 - Security Course Students</Modal.Body>
+        <Modal.Body>UTD CS4389</Modal.Body>
+        <Modal.Body>Nicholas Vitale</Modal.Body>
+        <Modal.Body>Bisma Ahmed</Modal.Body>
+        <Modal.Body>Abdullah Akbar</Modal.Body>
+        <Modal.Body>Harsha Chamrajnagar Srikara</Modal.Body>
+        <Modal.Body>Anirudh Emmadi</Modal.Body>
+        <Modal.Body>Eojin Kim</Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleCloseAbout}>
             Close
